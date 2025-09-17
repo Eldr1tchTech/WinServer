@@ -4,12 +4,10 @@
 
 #include <winsock.h>
 
-void (*handler)(SOCKET client_socket, char** arguments);
-
 enum SEGMENT_TYPE {
     SEGMENT_TYPE_STATIC,
     SEGMENT_TYPE_DYNAMIC
-} SEGMENT_TYPE;
+};
 
 typedef struct route_segment
 {

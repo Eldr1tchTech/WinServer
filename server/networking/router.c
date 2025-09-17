@@ -11,7 +11,9 @@ int is_segment_dynamic(char *segment_path);
 
 int router_add_route(router *router, enum METHOD method, char *path, void (*handler)(SOCKET client_socket, char **arguments))
 {
-    route *current_route = router->routes[router->route_count];
+    // Allocate memory for the new route
+    route *current_route = (route*)malloc(sizeof(route));
+    router->routes[router->route_count] = current_route;
     router->route_count++;
 
     char **path_segments = segment_raw_path(path);
@@ -38,8 +40,9 @@ void router_handle_request(router *router, request* req, SOCKET client_socket)
 {
     if (req->base->method == METHOD_GET && strcmp(req->base->path, "/") == 0)
     {
-        req->base->path = "/index.html";
+        req->base->path = "index.html";
         router_handle_request(router, req, client_socket);
+        return;
     }
 
     route *current_route;
@@ -79,6 +82,12 @@ void router_handle_request(router *router, request* req, SOCKET client_socket)
             current_argument = 0;
         }
     }
+
+    if (!is_route_handled)
+    {
+        router_send_response("404.html", client_socket);
+    }
+    
 }
 
 char **segment_raw_path(char *raw_path)

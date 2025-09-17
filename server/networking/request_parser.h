@@ -7,7 +7,7 @@ enum METHOD {
     METHOD_DELETE,
     // TODO: Add the rest
     METHOD_UNKNOWN
-} METHOD;
+};
 
 typedef struct base_header
 {
