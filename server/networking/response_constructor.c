@@ -1,6 +1,7 @@
 #include "response_constructor.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 // TODO: Take a buffer as a parameter to write to
 char *construct_response(char *version, enum STATUS_CODE status_code, char *content_type, long file_size, char *file_content) {
