@@ -2,10 +2,12 @@
 <html>
 <head>
     <title>My C Server</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 <body>
     <h1>test.html</h1>
     <p>This page (<a href="/test.html">/test.html</a>) was served successfully.</p>
     <p>Navigate to <a href="/index.html">/index.html</a>.</p>
+    <button hx-get="/htmx_test" hx-swap="innerHTML">HTMX Test Button</button>
 </body>
 </html>

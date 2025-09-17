@@ -16,6 +16,9 @@ void ROUTE_HANDLER_index(SOCKET client_socket, char** arguments) {
 void ROUTE_HANDLER_test(SOCKET client_socket, char** arguments) {
     router_send_response("test.html", client_socket);
 }
+void ROUTE_HANDLER_htmx_test(SOCKET client_socket, char** arguments) {
+    router_send_response("test_test.html", client_socket);
+}
 
 int main() {
     // Allocate server on heap instead of using uninitialized pointer
@@ -29,6 +32,7 @@ int main() {
         router_add_route(s->router, METHOD_GET, "/500.html", ROUTE_HANDLER_500);
         router_add_route(s->router, METHOD_GET, "/index.html", ROUTE_HANDLER_index);
         router_add_route(s->router, METHOD_GET, "/test.html", ROUTE_HANDLER_test);
+        router_add_route(s->router, METHOD_GET, "/htmx_test", ROUTE_HANDLER_htmx_test);
         result = server_run(10);
         if (result)
         {
