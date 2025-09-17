@@ -1,0 +1,19 @@
+#pragma once
+
+// TODO: Create a socket wrapper
+#include "router.h"
+
+#include <winsock.h>
+
+typedef struct server
+{
+    int port;
+    SOCKET listen_socket;
+    router* router;
+} server;
+
+int server_initialize(server servere);
+
+int server_run(int backlog);
+
+void server_shutdown();
