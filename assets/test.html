@@ -9,5 +9,12 @@
     <p>This page (<a href="/test.html">/test.html</a>) was served successfully.</p>
     <p>Navigate to <a href="/index.html">/index.html</a>.</p>
     <button hx-get="/htmx_test" hx-swap="innerHTML">HTMX Test Button</button>
+    <button hx-get="/htmx_set_call/8" hx-swap="innerHTML" hx-target="#set_call_target">
+        Set the Value to 8!
+    </button>
+    <button hx-get="/htmx_set_call/2" hx-swap="innerHTML" hx-target="#set_call_target">
+        Set the Value to 2!
+    </button>
+    <p>Current Value: <p id="set_call_target">NULL</p></p>
 </body>
 </html>

@@ -9,4 +9,4 @@ enum STATUS_CODE
     STATUS_CODE_500
 };
 
-char *construct_response(char *version, enum STATUS_CODE status_code, char *content_type, long file_size, char *file_content);
+void construct_response(char* response_buffer, char *version, enum STATUS_CODE status_code, char *content_type, long file_size, char *file_content);

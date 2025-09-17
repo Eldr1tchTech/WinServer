@@ -153,22 +153,21 @@ void router_send_response(char *path, SOCKET client_socket)
             fread(file_content, 1, file_size, f);
 
             char *response_buffer = {0};
+            response_buffer = (char*)malloc(2048 + file_size);
             if (strcmp(path, "404.html") == 0)
             {
-                response_buffer = construct_response("HTTP/1.1", STATUS_CODE_404, "text/html", file_size, file_content);
+                construct_response(response_buffer, "HTTP/1.1", STATUS_CODE_404, "text/html", file_size, file_content);
             }
             else if (strcmp(path, "500.html") == 0)
             {
-                response_buffer = construct_response("HTTP/1.1", STATUS_CODE_500, "text/html", file_size, file_content);
+                construct_response(response_buffer, "HTTP/1.1", STATUS_CODE_500, "text/html", file_size, file_content);
             }
             else
             {
-                response_buffer = construct_response("HTTP/1.1", STATUS_CODE_200, "text/html", file_size, file_content);
+                construct_response(response_buffer, "HTTP/1.1", STATUS_CODE_200, "text/html", file_size, file_content);
             }
 
             send(client_socket, response_buffer, strlen(response_buffer), 0);
-
-            printf("server_run - Response: \n%s\n", response_buffer);
 
             free(response_buffer);
             free(file_content);
@@ -180,4 +179,14 @@ void router_send_response(char *path, SOCKET client_socket)
     {
         router_send_response("404.html", client_socket);
     }
+}
+
+void router_send_content(char* content, SOCKET client_socket) {
+    int content_size = strlen(content);
+    char *response_buffer = (char*)malloc(2048 + content_size);
+    construct_response(response_buffer, "HTTP/1.1", STATUS_CODE_200, "text/html", content_size, content);
+
+    send(client_socket, response_buffer, strlen(response_buffer), 0);
+
+    free(response_buffer);
 }

@@ -3,9 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// TODO: Take a buffer as a parameter to write to
-char *construct_response(char *version, enum STATUS_CODE status_code, char *content_type, long file_size, char *file_content) {
-    char* out_buffer = (char*)malloc(2048 + file_size);
+void construct_response(char* response_buffer, char *version, enum STATUS_CODE status_code, char *content_type, long file_size, char *file_content) {
     char* raw_status_code;
 
     if (status_code == STATUS_CODE_200)
@@ -23,13 +21,11 @@ char *construct_response(char *version, enum STATUS_CODE status_code, char *cont
         raw_status_code = "500 Internal Server Error";
     }
 
-    sprintf(out_buffer,
+    sprintf(response_buffer,
         "%s %s\r\n"
         "Content-Type: %s\r\n"
         "Content-Length: %ld\r\n"
         "\r\n"
         "%s",
         version, raw_status_code, content_type, file_size, file_content);
-
-    return out_buffer;
 }

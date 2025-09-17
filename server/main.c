@@ -17,7 +17,10 @@ void ROUTE_HANDLER_test(SOCKET client_socket, char** arguments) {
     router_send_response("test.html", client_socket);
 }
 void ROUTE_HANDLER_htmx_test(SOCKET client_socket, char** arguments) {
-    router_send_response("test_test.html", client_socket);
+    router_send_response("htmx_test.html", client_socket);
+}
+void ROUTE_HANDLER_htmx_set_call(SOCKET client_socket, char** arguments) {
+    router_send_content(arguments[0], client_socket);
 }
 
 int main() {
@@ -33,6 +36,7 @@ int main() {
         router_add_route(s->router, METHOD_GET, "/index.html", ROUTE_HANDLER_index);
         router_add_route(s->router, METHOD_GET, "/test.html", ROUTE_HANDLER_test);
         router_add_route(s->router, METHOD_GET, "/htmx_test", ROUTE_HANDLER_htmx_test);
+        router_add_route(s->router, METHOD_GET, "/htmx_set_call/:id", ROUTE_HANDLER_htmx_set_call);
         result = server_run(10);
         if (result)
         {
