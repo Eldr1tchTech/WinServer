@@ -25,10 +25,10 @@ int main() {
     int result = server_initialize(s);
     if (result)
     {
-        router_add_route(s->router, METHOD_GET, "404.html", ROUTE_HANDLER_404);
-        router_add_route(s->router, METHOD_GET, "500.html", ROUTE_HANDLER_500);
-        router_add_route(s->router, METHOD_GET, "index.html", ROUTE_HANDLER_index);
-        router_add_route(s->router, METHOD_GET, "test.html", ROUTE_HANDLER_test);
+        router_add_route(s->router, METHOD_GET, "/404.html", ROUTE_HANDLER_404);
+        router_add_route(s->router, METHOD_GET, "/500.html", ROUTE_HANDLER_500);
+        router_add_route(s->router, METHOD_GET, "/index.html", ROUTE_HANDLER_index);
+        router_add_route(s->router, METHOD_GET, "/test.html", ROUTE_HANDLER_test);
         result = server_run(10);
         if (result)
         {

@@ -93,23 +93,31 @@ void router_handle_request(router *router, request* req, SOCKET client_socket)
 char **segment_raw_path(char *raw_path)
 {
     char **out_buffer = (char**)malloc(16 * sizeof(char*));
-    for (int i = 0; i < 16; i++) {
-        out_buffer[i] = (char*)malloc(64);
-    }
+    memset(out_buffer, 0, 16 * sizeof(char*)); // Initialize all to NULL
     
     char *temp_buffer = (char*)malloc(256);
     sprintf(temp_buffer, "%s", raw_path);
-    strtok(temp_buffer, "/");
-    char *current_segment;
+    
+    // Skip leading slash if present
+    char *start = temp_buffer;
+    if (start[0] == '/') {
+        start++;
+    }
+    
+    if (strlen(start) == 0) {
+        free(temp_buffer);
+        return out_buffer;
+    }
+    
+    char *current_segment = strtok(start, "/");
     int i = 0;
     
-    while ((current_segment = strtok(NULL, "/")) != NULL && i < 16) 
+    while (current_segment != NULL && i < 16) 
     {
+        out_buffer[i] = (char*)malloc(64);
         snprintf(out_buffer[i], 64, "%s", current_segment);
-        ++i;
-    }
-    if (i < 16) {
-        out_buffer[i] = NULL;
+        i++;
+        current_segment = strtok(NULL, "/");
     }
     
     free(temp_buffer);
