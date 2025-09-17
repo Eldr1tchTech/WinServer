@@ -5,20 +5,21 @@
 #include <Windows.h>
 
 void ROUTE_HANDLER_404(SOCKET client_socket, char** arguments) {
-    router_send_response("404.html");
+    router_send_response("404.html", client_socket);
 }
 void ROUTE_HANDLER_500(SOCKET client_socket, char** arguments) {
-    router_send_response("500.html");
+    router_send_response("500.html", client_socket);
 }
 void ROUTE_HANDLER_index(SOCKET client_socket, char** arguments) {
-    router_send_response("index.html");
+    router_send_response("index.html", client_socket);
 }
 void ROUTE_HANDLER_test(SOCKET client_socket, char** arguments) {
-    router_send_response("test.html");
+    router_send_response("test.html", client_socket);
 }
 
 int main() {
-    server* s;
+    // Allocate server on heap instead of using uninitialized pointer
+    server* s = (server*)malloc(sizeof(server));
     s->port = 8080;
 
     int result = server_initialize(s);
@@ -36,5 +37,6 @@ int main() {
         }
     }
 
+    free(s);
     return 1;
 }

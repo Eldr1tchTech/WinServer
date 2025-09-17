@@ -12,7 +12,7 @@ typedef struct server
     router* router;
 } server;
 
-int server_initialize(server servere);
+int server_initialize(server* server);
 
 int server_run(int backlog);
 

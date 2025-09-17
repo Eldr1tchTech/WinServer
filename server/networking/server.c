@@ -6,7 +6,7 @@
 
 static server *server_ptr = 0;
 
-int server_initialize(server* server)
+int server_initialize(server *server)
 {
     if (server->port)
     {
@@ -52,9 +52,9 @@ int server_initialize(server* server)
     }
     printf("server_initialize - Socket bound to port %i.", server_ptr->port);
 
-    router* router = {0};
-    router->route_count = 0;
-    server_ptr->router = router;
+    router *r = (router *)malloc(sizeof(router));
+    r->route_count = 0;
+    server_ptr->router = r;
 
     return 1;
 }
@@ -136,7 +136,7 @@ int server_run(int backlog)
             closesocket(client_socket);
         }
     }
-    
+
     return 1;
 }
 

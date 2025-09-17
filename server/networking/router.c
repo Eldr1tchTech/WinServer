@@ -9,7 +9,7 @@
 char **segment_raw_path(char *raw_path);
 int is_segment_dynamic(char *segment_path);
 
-int router_add_route(router *router, enum METHOD method, char *path, void (*handler)(SOCKET client_socket, char **arguments[16][64]))
+int router_add_route(router *router, enum METHOD method, char *path, void (*handler)(SOCKET client_socket, char **arguments))
 {
     route *current_route = router->routes[router->route_count];
     router->route_count++;
@@ -21,11 +21,11 @@ int router_add_route(router *router, enum METHOD method, char *path, void (*hand
     int seg_count = 0;
     while (path_segments[seg_count] != 0)
     {
+        current_segment = (route_segment*)malloc(sizeof(route_segment));
         int is_dynamic = is_segment_dynamic(path_segments[seg_count]);
         current_segment->seg_type = is_dynamic ? SEGMENT_TYPE_DYNAMIC : SEGMENT_TYPE_STATIC;
         current_segment->seg_path = is_dynamic ? path_segments[seg_count] + 1 : path_segments[seg_count];
         current_route->segments[seg_count] = current_segment;
-        current_segment = 0;
         seg_count++;
     }
     current_route->segment_count = seg_count;
@@ -47,7 +47,7 @@ void router_handle_request(router *router, request* req, SOCKET client_socket)
     char **request_path_segments;
     request_path_segments = segment_raw_path(req->base.path);
     int current_argument = 0;
-    char **arguments;
+    char *arguments[16];
     int is_route_handled = 0;
     for (int i = 0; i < router->route_count && !is_route_handled; ++i)
     {
@@ -83,23 +83,33 @@ void router_handle_request(router *router, request* req, SOCKET client_socket)
 
 char **segment_raw_path(char *raw_path)
 {
-    char **out_buffer[16][64] = {0};
-    char *temp_buffer;
-    sprintf(temp_buffer, "/%s", raw_path);
+    char **out_buffer = (char**)malloc(16 * sizeof(char*));
+    for (int i = 0; i < 16; i++) {
+        out_buffer[i] = (char*)malloc(64);
+    }
+    
+    char *temp_buffer = (char*)malloc(256);
+    sprintf(temp_buffer, "%s", raw_path);
     strtok(temp_buffer, "/");
     char *current_segment;
     int i = 0;
-    while (current_segment = strtok(NULL, "/") != NULL && i < 16)
+    
+    while ((current_segment = strtok(NULL, "/")) != NULL && i < 16) 
     {
-        snprintf(out_buffer[i], 64, current_segment);
+        snprintf(out_buffer[i], 64, "%s", current_segment);
         ++i;
     }
+    if (i < 16) {
+        out_buffer[i] = NULL;
+    }
+    
+    free(temp_buffer);
     return out_buffer;
 }
 
 int is_segment_dynamic(char *segment_path)
 {
-    if (segment_path[0] == ":")
+    if (segment_path[0] == ':')
     {
         return 1;
     }
@@ -109,7 +119,7 @@ int is_segment_dynamic(char *segment_path)
 
 void router_send_response(char *path, SOCKET client_socket)
 {
-    char *path_buffer;
+    char path_buffer[256];
     sprintf(path_buffer, "%s/%s", BASE_PATH, path);
     FILE *f = fopen(path_buffer, "rb"); // Open in binary read mode
     if (f)
@@ -143,6 +153,7 @@ void router_send_response(char *path, SOCKET client_socket)
 
             printf("server_run - Response: \n%s\n", response_buffer);
 
+            free(response_buffer);
             free(file_content);
         }
 

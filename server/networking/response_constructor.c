@@ -2,8 +2,9 @@
 
 #include <stdio.h>
 
+// TODO: Take a buffer as a parameter to write to
 char *construct_response(char *version, enum STATUS_CODE status_code, char *content_type, long file_size, char *file_content) {
-    char* out_buffer;
+    char* out_buffer = (char*)malloc(2048 + file_size);
     char* raw_status_code;
 
     if (status_code == STATUS_CODE_200)

@@ -3,7 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 
-request parse_request(char* raw_request[1024]) {
+// TODO: parse into an request object instead of creating it locally here
+request parse_request(char* raw_request) {
     request req;
     base_header b_header;
     req.base = b_header;
@@ -14,6 +15,7 @@ request parse_request(char* raw_request[1024]) {
     req.base.version = strtok(NULL, " ");
 
     // TODO: Parse the rest of the headers
+    return req;
 }
 
 enum METHOD parse_method(char* raw_method) {
@@ -26,7 +28,7 @@ enum METHOD parse_method(char* raw_method) {
     } else if (strcmp(raw_method, "PUSH") == 0)
     {
         return METHOD_PUSH;
-    } else if (strcmp(raw_method, "DELETE"))
+    } else if (strcmp(raw_method, "DELETE") == 0)
     {
         return METHOD_DELETE;
     } else
