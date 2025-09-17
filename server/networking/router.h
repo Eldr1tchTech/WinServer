@@ -35,6 +35,6 @@ typedef struct router
 int router_add_route(router* router, enum METHOD method, char* path, void (*handler)(SOCKET client_socket, char** arguments));
 
 // Should gracefully handle internal errors, so no return value is needed
-void router_handle_request(router* router, request req, SOCKET client_socket);
+void router_handle_request(router* router, request* req, SOCKET client_socket);
 
 void router_send_response(char *path, SOCKET client_socket);

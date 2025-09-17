@@ -3,19 +3,18 @@
 #include <string.h>
 #include <stdio.h>
 
-// TODO: parse into an request object instead of creating it locally here
-request parse_request(char* raw_request) {
-    request req;
-    base_header b_header;
-    req.base = b_header;
+enum METHOD parse_method(char* raw_method);
+
+void parse_request(request* req, char* raw_request) {
+    base_header* b_header = (base_header*)malloc(sizeof(base_header));
+    req->base = b_header;
     char* raw_base_header = strtok(raw_request, "\n");
 
-    req.base.method = parse_method(strtok(raw_base_header, " "));
-    req.base.path = strtok(NULL, " ");
-    req.base.version = strtok(NULL, " ");
+    req->base->method = parse_method(strtok(raw_base_header, " "));
+    req->base->path = strtok(NULL, " ");
+    req->base->version = strtok(NULL, " ");
 
     // TODO: Parse the rest of the headers
-    return req;
 }
 
 enum METHOD parse_method(char* raw_method) {

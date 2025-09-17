@@ -36,23 +36,23 @@ int router_add_route(router *router, enum METHOD method, char *path, void (*hand
 
 void router_handle_request(router *router, request* req, SOCKET client_socket)
 {
-    if (req->base.method == METHOD_GET && strcmp(req->base.path, "/") == 0)
+    if (req->base->method == METHOD_GET && strcmp(req->base->path, "/") == 0)
     {
-        req->base.path = "/index.html";
+        req->base->path = "/index.html";
         router_handle_request(router, req, client_socket);
     }
 
     route *current_route;
     route_segment *current_segment;
     char **request_path_segments;
-    request_path_segments = segment_raw_path(req->base.path);
+    request_path_segments = segment_raw_path(req->base->path);
     int current_argument = 0;
     char *arguments[16];
     int is_route_handled = 0;
     for (int i = 0; i < router->route_count && !is_route_handled; ++i)
     {
         current_route = router->routes[i];
-        if (current_route->method == req->base.method)
+        if (current_route->method == req->base->method)
         {
             for (int j = 0; j < current_route->segment_count && !is_route_handled; ++j)
             {

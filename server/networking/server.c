@@ -1,5 +1,7 @@
 #include "server.h"
 
+#include "request_parser.h"
+
 #include <windows.h>
 #include <string.h> // For strlen
 #include <stdio.h>
@@ -83,56 +85,19 @@ int server_run(int backlog)
                 continue; // Continue to the next iteration
             }
 
-            char request[1024] = {0};
-            recv(client_socket, request, sizeof(request) - 1, 0);
+            char request_buffer[2048] = {0};
+            recv(client_socket, request_buffer, sizeof(request_buffer) - 1, 0);
 
-            printf("server_run - Request: \n%s\n", request);
+            printf("server_run - Request: \n%s\n", request_buffer);
 
-            // Check for a simple GET / request
-            if (memcmp(request, "GET / ", 6) == 0)
-            {
-                FILE *f = fopen("assets/index.html", "rb"); // Open in binary read mode
-                if (f)
-                {
-                    // Find the file size
-                    fseek(f, 0, SEEK_END);
-                    long file_size = ftell(f);
-                    fseek(f, 0, SEEK_SET);
+            request *req = (request*)malloc(sizeof(request));
+            parse_request(req, request_buffer);
 
-                    // Allocate memory for the file content
-                    char *file_content = (char *)malloc(file_size);
-                    if (file_content)
-                    {
-                        fread(file_content, 1, file_size, f);
+            router_handle_request(server_ptr->router, req, client_socket);
 
-                        // Create a proper HTTP response
-                        char response_buffer[2048] = {0};
-                        sprintf(response_buffer,
-                                "HTTP/1.1 200 OK\r\n"
-                                "Content-Type: text/html\r\n"
-                                "Content-Length: %ld\r\n"
-                                "\r\n" // Empty line separates headers from body
-                                "%s",  // The file content
-                                file_size, file_content);
+            free(req->base);
+            free(req);
 
-                        send(client_socket, response_buffer, strlen(response_buffer), 0);
-
-                        printf("server_run - Response: \n%s\n", response_buffer);
-
-                        free(file_content);
-                    }
-                    // *** Cleanup #1: Close the file ***
-                    fclose(f);
-                }
-                else
-                {
-                    // Send a 404 Not Found response if file doesn't exist
-                    const char *not_found_response = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
-                    send(client_socket, not_found_response, strlen(not_found_response), 0);
-                }
-            }
-
-            // *** Cleanup #2: Close the client socket ***
             closesocket(client_socket);
         }
     }

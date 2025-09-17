@@ -23,10 +23,8 @@ typedef struct header
 } header;
 typedef struct request
 {
-    base_header base;
+    base_header* base;
     header* headers;
 } request;
 
-request parse_request(char* raw_request);
-
-enum METHOD parse_method(char* raw_method);
+void parse_request(request* req, char* raw_request);
