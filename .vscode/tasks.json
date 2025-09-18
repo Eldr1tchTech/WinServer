@@ -16,6 +16,21 @@
             "problemMatcher": [
                 "$msCompile"
             ]
+        },
+        {
+            "label": "Stress Test Server (bat)",
+            "type": "shell",
+            "command": "python stress_tester.py",
+            "group": {
+                "kind": "test",
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ]
         }
     ]
 }
