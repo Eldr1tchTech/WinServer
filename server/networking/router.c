@@ -3,6 +3,7 @@
 #include "response_constructor.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define BASE_PATH "assets"
 
@@ -92,68 +93,6 @@ void router_handle_request(router *router, request* req, SOCKET client_socket)
     if (!is_route_handled)
     {
         router_send_response("404.html", client_socket);
-    }
-}
-
-// Threaded version
-DWORD WINAPI router_handle_request_threaded(void* lpParam) {
-    // Cast to correct data
-    thread_router_parameter* param = (thread_router_parameter*)lpParam;
-
-    // Handle parsing failures
-    if (param->req->base->method == METHOD_UNKNOWN || !param->req->base->path) {
-        router_send_response("400.html", param->client_socket);  // Or 500.html
-        return;
-    }
-    
-    if (param->req->base->method == METHOD_GET && strcmp(param->req->base->path, "/") == 0)
-    {
-        param->req->base->path = "index.html";
-        router_handle_request(param->router, param->req, param->client_socket);
-        return;
-    }
-
-    route *current_route;
-    route_segment *current_segment;
-    char **request_path_segments;
-    request_path_segments = segment_raw_path(param->req->base->path);
-    int current_argument = 0;
-    char *arguments[16];
-    int is_route_handled = 0;
-    for (int i = 0; i < param->router->route_count && !is_route_handled; ++i)
-    {
-        current_route = param->router->routes[i];
-        if (current_route->method == param->req->base->method)
-        {
-            for (int j = 0; j < current_route->segment_count && !is_route_handled; ++j)
-            {
-                current_segment = current_route->segments[j];
-                if (strcmp(current_segment->seg_path, request_path_segments[j]) == 0 || current_segment->seg_type == SEGMENT_TYPE_DYNAMIC)
-                {
-                    if (current_segment->seg_type == SEGMENT_TYPE_DYNAMIC)
-                    {
-                        arguments[current_argument] = request_path_segments[j];
-                        current_argument++;
-                    }
-                    if (j == current_route->segment_count - 1)
-                    {
-                        current_route->handler(param->client_socket, arguments);
-                        is_route_handled = 1;
-                        break;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-            current_argument = 0;
-        }
-    }
-
-    if (!is_route_handled)
-    {
-        router_send_response("404.html", param->client_socket);
     }
 }
 

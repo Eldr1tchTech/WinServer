@@ -1,8 +1,8 @@
 #include "networking/server.h"
 #include "networking/router.h"
 
-#include <winsock.h>
-#include <Windows.h>
+#include "win_headers.h"
+#include "stdlib.h"
 
 void ROUTE_HANDLER_404(SOCKET client_socket, char** arguments) {
     router_send_response("404.html", client_socket);

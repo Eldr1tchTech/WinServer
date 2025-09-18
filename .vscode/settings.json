@@ -3,6 +3,7 @@
         "windows.h": "c",
         "winsock.h": "c",
         "winsock2.h": "c",
-        "request_parser.h": "c"
+        "request_parser.h": "c",
+        "server.h": "c"
     }
 }

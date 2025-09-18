@@ -1,0 +1,5 @@
+Multithreading has beeen added
+ - Settings:
+    - 100 ramp up
+    - 1000 total users
+    - 60s
