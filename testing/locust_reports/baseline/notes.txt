@@ -1,0 +1,3 @@
+The baseline
+ - Single-threaded
+ - No Optimizations

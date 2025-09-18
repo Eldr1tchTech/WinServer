@@ -6,6 +6,9 @@
 #include <string.h> // For strlen
 #include <stdio.h>
 
+#define THREADING_ENABLED 1
+#define THREAD_COUNT 8
+
 static server *server_ptr = 0;
 
 int server_initialize(server *server)
@@ -76,6 +79,19 @@ int server_run(int backlog)
 
         printf("Server listening on port %i...\n", server_ptr->port);
 
+        if (THREADING_ENABLED)
+        {
+            thread_router_parameter* param_array[THREAD_COUNT];
+            HANDLE thread_array[THREAD_COUNT];
+
+            // Create threads
+            for (int i = 0; i < THREAD_COUNT; ++i)
+            {
+                param_array[i] = (thread_router_parameter*) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(thread_router_parameter));
+                HANDLE thread_handle = CreateThread(NULL, 0, router_handle_request_threaded, NULL, 0, NULL);
+            }
+        }
+
         while (1)
         {
             SOCKET client_socket = accept(listen_socket, NULL, NULL);
@@ -88,11 +104,10 @@ int server_run(int backlog)
             char request_buffer[2048] = {0};
             recv(client_socket, request_buffer, sizeof(request_buffer) - 1, 0);
 
-            printf("server_run - Request: \n%s\n", request_buffer);
-
-            request *req = (request*)malloc(sizeof(request));
+            request *req = (request *)malloc(sizeof(request));
             parse_request(req, request_buffer);
 
+            thread_router_parameter *param;
             router_handle_request(server_ptr->router, req, client_socket);
 
             free(req->base);

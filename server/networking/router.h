@@ -37,3 +37,12 @@ void router_handle_request(router* router, request* req, SOCKET client_socket);
 
 void router_send_response(char *path, SOCKET client_socket);
 void router_send_content(char* content, SOCKET client_socket);
+
+typedef struct thread_router_parameter
+{
+    router* router;
+    request* req;
+    SOCKET client_socket;
+} thread_router_parameter;
+
+DWORD WINAPI router_handle_request_threaded(void* lpParam);
