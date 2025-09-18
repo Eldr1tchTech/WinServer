@@ -8,7 +8,7 @@
 
 #define THREADING_ENABLED 1
 #define THREAD_COUNT 16
-#define PENDING_ACCEPTS 64  // Change to something larger probably
+#define PENDING_ACCEPTS 256  // Change to something larger probably
 
 static server *server_ptr = 0;
 static HANDLE iocp = NULL;
