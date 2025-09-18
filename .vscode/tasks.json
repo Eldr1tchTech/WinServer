@@ -18,9 +18,9 @@
             ]
         },
         {
-            "label": "Stress Test Server (bat)",
+            "label": "Start Locust",
             "type": "shell",
-            "command": "python stress_tester.py",
+            "command": "locust -f testing/benchmark.py",
             "group": {
                 "kind": "test",
             },

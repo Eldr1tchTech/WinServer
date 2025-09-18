@@ -38,6 +38,12 @@ int router_add_route(router *router, enum METHOD method, char *path, void (*hand
 
 void router_handle_request(router *router, request* req, SOCKET client_socket)
 {
+    // Handle parsing failures
+    if (req->base->method == METHOD_UNKNOWN || !req->base->path) {
+        router_send_response("400.html", client_socket);  // Or 500.html
+        return;
+    }
+    
     if (req->base->method == METHOD_GET && strcmp(req->base->path, "/") == 0)
     {
         req->base->path = "index.html";
